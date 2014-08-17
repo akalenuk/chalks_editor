@@ -39,7 +39,7 @@ namespace WindowsFormsApplication1 {
             return false;
         }
 
-        private void richTextBox1_TextChanged(object sender, EventArgs e) {
+        private void recolor(int from, int to){
             bool name = false;
             int name_start = 0;
             int sel_start = richTextBox1.SelectionStart;
@@ -49,7 +49,7 @@ namespace WindowsFormsApplication1 {
 
             LockWindowUpdate(richTextBox1.Handle);
 
-            for (int i = 0; i < richTextBox1.Text.Length; i++) { 
+            for (int i = from; i < to; i++) { 
                 if ( ok_for_name( richTextBox1.Text[i] ) ){
                     if(!name){
                         name_start = i;
@@ -59,11 +59,11 @@ namespace WindowsFormsApplication1 {
                     if(name){
                         int name_len = i - name_start;
                         string the_name = richTextBox1.Text.Substring(name_start, name_len);
-                        Random rnd = new Random(the_name.GetHashCode());
-                        
-                        int name_R = rnd.Next(100, 255);
-                        int name_G = rnd.Next(100, 255);
-                        int name_B = rnd.Next(100, 255);
+
+                        int hash = the_name.GetHashCode();                        
+                        int name_R = 128 + (hash % 128);
+                        int name_G = 128 + ((hash / 128) % 128);
+                        int name_B = 128 + ((hash / 128 / 128) % 128);
 
                         richTextBox1.Select(name_start, name_len);
                         richTextBox1.SelectionColor = Color.FromArgb(name_R, name_G, name_B);
@@ -76,6 +76,10 @@ namespace WindowsFormsApplication1 {
             richTextBox1.Select(sel_start, sel_len);
             SendMessage(richTextBox1.Handle, EM_SETSCROLLPOS, 0, ref scroll_pos);
             LockWindowUpdate((IntPtr)0);
+        }
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e) {
+            recolor(0, richTextBox1.Text.Length);
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -100,11 +104,12 @@ namespace WindowsFormsApplication1 {
 
         private void Form1_Load(object sender, EventArgs e) {
             file_name = "";
-            Random rnd = new Random( DateTime.Now.TimeOfDay.GetHashCode() );
-            int name_R = rnd.Next(0, 50);
-            int name_G = rnd.Next(0, 50);
-            int name_B = rnd.Next(0, 50);
+            int hash = DateTime.Now.TimeOfDay.GetHashCode();
+            int name_R = hash % 32;
+            int name_G = (hash / 32) % 32;
+            int name_B = (hash / 32 / 32) % 32;
             richTextBox1.BackColor = Color.FromArgb( name_R, name_G, name_B );
+            recolor(0, richTextBox1.Text.Length);
         }
     }
 }
