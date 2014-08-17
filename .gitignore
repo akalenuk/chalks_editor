@@ -1,0 +1,5 @@
+*.txt
+chalks/obj/x86/Debug/chalks.csproj.GenerateResource.Cache
+chalks/obj/x86/Debug/chalks.exe
+chalks/obj/x86/Debug/chalks.pdb
+chalks/obj/x86/Debug/DesignTimeResolveAssemblyReferencesInput.cache
