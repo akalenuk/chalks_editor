@@ -1,0 +1,8 @@
+C:\Users\Avatar\documents\visual studio 2010\Projects\chalks\chalks\bin\Debug\chalks.exe
+C:\Users\Avatar\documents\visual studio 2010\Projects\chalks\chalks\bin\Debug\chalks.pdb
+C:\Users\Avatar\documents\visual studio 2010\Projects\chalks\chalks\obj\x86\Debug\WindowsFormsApplication1.Form1.resources
+C:\Users\Avatar\documents\visual studio 2010\Projects\chalks\chalks\obj\x86\Debug\WindowsFormsApplication1.Properties.Resources.resources
+C:\Users\Avatar\documents\visual studio 2010\Projects\chalks\chalks\obj\x86\Debug\chalks.csproj.GenerateResource.Cache
+C:\Users\Avatar\documents\visual studio 2010\Projects\chalks\chalks\obj\x86\Debug\chalks.exe
+C:\Users\Avatar\documents\visual studio 2010\Projects\chalks\chalks\obj\x86\Debug\chalks.pdb
+C:\Users\Avatar\documents\visual studio 2010\Projects\chalks\chalks\obj\x86\Debug\chalks.csprojResolveAssemblyReference.cache
