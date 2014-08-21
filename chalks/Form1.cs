@@ -148,10 +148,10 @@ namespace WindowsFormsApplication1
                             int name_G = 192 + ((hash / 64) % 64);
                             int name_B = 192 + ((hash / 64 / 64) % 64);
 
-                            if (is_comment) {
-                                name_R -= 32;
-                                name_G -= 32;
-                                name_B -= 32;
+                            if (is_comment || is_string || is_char) {
+                                name_R = 192 + (name_R - 192) / 2;
+                                name_G = 192 + (name_G - 192) / 2;
+                                name_B = 192 + (name_B - 192) / 2;
                             }
 
                             richTextBox1.Select(name_start, name_len);
@@ -177,6 +177,7 @@ namespace WindowsFormsApplication1
                             {
                                 richTextBox1.Select(comment_start, i - comment_start);
                                 richTextBox1.SelectionBackColor = comment_back;
+                                richTextBox1.SelectionFont = new Font(richTextBox1.SelectionFont, FontStyle.Italic);
                             }
                             is_comment = false;
                         }
@@ -265,13 +266,13 @@ namespace WindowsFormsApplication1
             int base_R = hash % 32;
             int base_G = (hash / 32) % 32;
             int base_B = (hash / 32 / 32) % 32;
-            back = Color.FromArgb(base_R + 6, base_G + 6, base_B + 6);
-            tab_back = Color.FromArgb(base_R + 0, base_G + 0, base_B + 0);
-            space_back = Color.FromArgb(base_R + 10, base_G + 10, base_B + 10);
+            back = Color.FromArgb(base_R + 0, base_G + 0, base_B + 0);
+            tab_back = Color.FromArgb(base_R + 14, base_G + 14, base_B + 14);
+            space_back = Color.FromArgb(base_R + 6, base_G + 6, base_B + 6);
             icon_back = Color.FromArgb(base_R * 2, base_G * 2, base_B * 2);
             comment_back = Color.FromArgb(base_R + 6, base_G + 6, base_B + 24);
-            string_back = Color.FromArgb(base_R + 6, base_G + 12, base_B + 0);
-            char_back = Color.FromArgb(base_R + 12, base_G + 12, base_B + 0);
+            string_back = space_back;
+            char_back = space_back;
             richTextBox1.BackColor = back;
 
             Bitmap bmp = new Bitmap(64, 64);
