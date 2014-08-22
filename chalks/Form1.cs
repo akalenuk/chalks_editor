@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace WindowsFormsApplication1
 {
@@ -42,6 +43,10 @@ namespace WindowsFormsApplication1
 
         bool key_pressed = false;
 
+        const int MAX_UNDO = 100;
+        string[] undo_redo = new string[MAX_UNDO];
+        int undo_redo_index = 0;
+
         public Form1()
         {
             InitializeComponent();
@@ -63,12 +68,13 @@ namespace WindowsFormsApplication1
             Win32Point scroll_pos = new Win32Point();
             SendMessage(richTextBox1.Handle, EM_GETSCROLLPOS, 0, ref scroll_pos);
             LockWindowUpdate(richTextBox1.Handle);
+            richTextBox1.Hide();
 
             bool is_name = false;
             int name_start = 0;
             string the_name = "";
             richTextBox1.Select(from, to - from);
-            richTextBox1.SelectionBackColor = back;
+            richTextBox1.SelectionBackColor = space_back;
             richTextBox1.SelectionFont = new Font(richTextBox1.Font, FontStyle.Regular);
             bool is_string = false;
             int string_start = 0;
@@ -102,26 +108,20 @@ namespace WindowsFormsApplication1
                     {
                         name_start = i;
                         is_name = true;
-                        the_name = "" + cur_char;
                     }
-                    else
-                    {
-                        the_name += cur_char;
-                    }
+                    the_name += cur_char;
                 }
                 else
                 {
                     if (spacesToolStripMenuItem.Checked)
                     {
-                        if (cur_char == '\t')
+                        if (!(is_comment || is_string || is_char))
                         {
-                            richTextBox1.Select(i, 1);
-                            richTextBox1.SelectionBackColor = tab_back;
-                        }
-                        if (cur_char == ' ')
-                        {
-                            richTextBox1.Select(i, 1);
-                            richTextBox1.SelectionBackColor = space_back;
+                            if (cur_char == '\t')
+                            {
+                                richTextBox1.Select(i, 1);
+                                richTextBox1.SelectionBackColor = tab_back;
+                            }
                         }
                     }
 
@@ -144,9 +144,9 @@ namespace WindowsFormsApplication1
                         else if (perWordHighlightingToolStripMenuItem.Checked)
                         {
                             int hash = the_name.GetHashCode();
-                            int name_R = 192 + (hash % 64);
-                            int name_G = 192 + ((hash / 64) % 64);
-                            int name_B = 192 + ((hash / 64 / 64) % 64);
+                            int name_R = 192 + (hash & 0x3f);
+                            int name_G = 192 + ((hash >> 6) & 0x3f);
+                            int name_B = 192 + ((hash >> 12) & 0x3f);
 
                             if (is_comment || is_string || is_char) {
                                 name_R = 192 + (name_R - 192) / 2;
@@ -162,11 +162,12 @@ namespace WindowsFormsApplication1
                             richTextBox1.SelectionColor = Color.Silver;
                         }
                         is_name = false;
+                        the_name = "";
                     }
 
                     if (commentsToolStripMenuItem.Checked)
                     {
-                        if ((cur_char == '#' || cur_char == '-' || cur_char == '/') && (prev_char == '\n' || i == from))
+                        if ((cur_char == '#' || cur_char == '-' || cur_char == '/' || cur_char == '%') && (prev_char == '\n' || i == from))
                         {
                             is_comment = true;
                             comment_start = i;
@@ -180,6 +181,8 @@ namespace WindowsFormsApplication1
                                 richTextBox1.SelectionFont = new Font(richTextBox1.SelectionFont, FontStyle.Italic);
                             }
                             is_comment = false;
+                            is_string = false;
+                            is_char = false;
                         }
                     }
 
@@ -216,6 +219,7 @@ namespace WindowsFormsApplication1
                     }
                 }
             }
+            richTextBox1.Show();
             richTextBox1.Select(sel_start, sel_len);
             SendMessage(richTextBox1.Handle, EM_SETSCROLLPOS, 0, ref scroll_pos);
             LockWindowUpdate((IntPtr)0);
@@ -223,7 +227,18 @@ namespace WindowsFormsApplication1
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
-            // backup plan is to do: recolor(0, richTextBox1.Text.Length);
+            if (undo_redo_index < MAX_UNDO - 1)
+            {
+                undo_redo_index++;
+            }
+            else 
+            {
+                for (int i = 0; i < MAX_UNDO - 1; i++) 
+                {
+                    undo_redo[i] = undo_redo[i + 1];
+                }
+            }
+            undo_redo[undo_redo_index] = richTextBox1.Rtf;
         }
 
         public void open(string local_file_name)
@@ -266,9 +281,9 @@ namespace WindowsFormsApplication1
             int base_R = hash % 32;
             int base_G = (hash / 32) % 32;
             int base_B = (hash / 32 / 32) % 32;
-            back = Color.FromArgb(base_R + 0, base_G + 0, base_B + 0);
-            tab_back = Color.FromArgb(base_R + 14, base_G + 14, base_B + 14);
-            space_back = Color.FromArgb(base_R + 6, base_G + 6, base_B + 6);
+            back = Color.FromArgb(base_R + 4, base_G + 4, base_B + 4);
+            tab_back = Color.FromArgb(base_R + 4, base_G + 4, base_B + 4);
+            space_back = Color.FromArgb(base_R + 0, base_G + 0, base_B + 0);
             icon_back = Color.FromArgb(base_R * 2, base_G * 2, base_B * 2);
             comment_back = Color.FromArgb(base_R + 6, base_G + 6, base_B + 24);
             string_back = space_back;
@@ -354,7 +369,21 @@ namespace WindowsFormsApplication1
 
         private void recolorToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             recolor(0, richTextBox1.Text.Length);
+            stopwatch.Stop();
+            MessageBox.Show(stopwatch.Elapsed.ToString());
+        }
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (undo_redo_index > 0) 
+            {
+                richTextBox1.Rtf = undo_redo[undo_redo_index];
+                undo_redo[undo_redo_index] = "";
+                undo_redo_index--;
+            }
         }
     }
 }
