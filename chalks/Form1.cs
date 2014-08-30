@@ -144,9 +144,9 @@ namespace WindowsFormsApplication1
                         else if (perWordHighlightingToolStripMenuItem.Checked)
                         {
                             int hash = the_name.GetHashCode();
-                            int name_R = 192 + (hash & 0x3f);
-                            int name_G = 192 + ((hash >> 6) & 0x3f);
-                            int name_B = 192 + ((hash >> 12) & 0x3f);
+                            int name_R = 192 + (hash % 32) * 2;
+                            int name_G = 192 + ((hash / 32) % 32) * 2;
+                            int name_B = 192 + ((hash / 32 / 32) % 32) * 2;
 
                             if (is_comment || is_string || is_char) {
                                 name_R = 192 + (name_R - 192) / 2;
@@ -282,7 +282,7 @@ namespace WindowsFormsApplication1
             int base_G = (hash / 32) % 32;
             int base_B = (hash / 32 / 32) % 32;
             back = Color.FromArgb(base_R + 4, base_G + 4, base_B + 4);
-            tab_back = Color.FromArgb(base_R + 4, base_G + 4, base_B + 4);
+            tab_back = Color.FromArgb(base_R + 12, base_G + 12, base_B + 12);
             space_back = Color.FromArgb(base_R + 0, base_G + 0, base_B + 0);
             icon_back = Color.FromArgb(base_R * 2, base_G * 2, base_B * 2);
             comment_back = Color.FromArgb(base_R + 6, base_G + 6, base_B + 24);
