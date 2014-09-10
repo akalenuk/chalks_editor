@@ -59,6 +59,6 @@ And this for strings.
 <img src="screenshots/chalks10.png">
 
 
-Coloring schemes may vary a lot from iteration to iteration as the whole reason for this project is to explore the concept. Coloring might work better or worth depending on a display or even the lighting around.
+Coloring schemes may vary a lot from iteration to iteration as the whole reason for this project is to explore the concept. Coloring might work better or worse depending on a display or even the lighting around.
 
 You can experiment with it yourself.
