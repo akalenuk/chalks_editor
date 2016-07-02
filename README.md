@@ -62,3 +62,5 @@ And this for strings.
 Coloring schemes may vary a lot from iteration to iteration as the whole reason for this project is to explore the concept. Coloring might work better or worse depending on a display or even the lighting around.
 
 You can experiment with it yourself.
+
+Here's the exe: https://dl.dropboxusercontent.com/u/25247809/exe/chalks.exe
