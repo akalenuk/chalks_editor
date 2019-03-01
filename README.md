@@ -63,4 +63,4 @@ Coloring schemes may vary a lot from iteration to iteration as the whole reason 
 
 You can experiment with it yourself.
 
-Here's the exe: https://dl.dropboxusercontent.com/u/25247809/exe/chalks.exe
+Here's the exe: https://github.com/akalenuk/chalks_editor/releases
